@@ -4,16 +4,13 @@ services:
   api:
     build: 
       context: ./api
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
+ 
     ports:
       - "3000:3000"
     volumes:
-      - /usr/src/app/node_modules
-      - ./api/src:/usr/src/app/src
-      - ./api/db:/usr/src/app/db
-      - ./api/package.json:/usr/src/app/package.json
-      - ./api/package-lock.json:/usr/src/app/package-lock.json
-      - ./api/tsconfig.json:/usr/src/app/tsconfig.json
+      - /app/api/node_modules
+      - ${SNAPPOINT_PATH}/api:/app/api
     environment:
       - NODE_ENV=development
       - DB_TYPE=postgres

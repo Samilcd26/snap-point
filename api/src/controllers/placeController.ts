@@ -57,7 +57,8 @@ export const getNearbyPlaces = async (req: AuthRequest, res: Response) => {
             return res.status(400).json({ message: "Location not set. Please update your location first." });
         }
 
-        const { latitude, longitude } = req.user.currentLocation;
+        const { coordinates } = req.user.currentLocation;
+        const [longitude, latitude] = coordinates;
         const placeRepository = AppDataSource.getRepository(Place);
 
         const places = await placeRepository

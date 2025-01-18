@@ -1,12 +1,8 @@
 import { Router } from "express";
-import { register, login, getProfile, updateProfile, getLeaderboard, updateLocation, getNearbyPlaces, refreshToken } from "../controllers/userController";
+import { getProfile, updateProfile, getLeaderboard, updateLocation, getNearbyPlaces } from "../controllers/userController";
 
 const router = Router();
 
-// Public routes
-router.post("/register", register);
-router.post("/login", login);
-router.post("/refresh-token", refreshToken);
 
 // Protected routes
 router.get("/profile", getProfile);

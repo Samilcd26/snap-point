@@ -14,7 +14,7 @@ app.use(cors());
 app.use(express.json());
 
 // Define routes to skip authentication
-const skipAuthRoutes = ["/api/users/login", "/api/users/register"];
+const skipAuthRoutes = ["/api/auth/login", "/api/auth/register"];
 
 // Apply authentication middleware to all routes
 app.use((req, res, next) => {
