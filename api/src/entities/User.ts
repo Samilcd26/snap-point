@@ -3,8 +3,8 @@ import { Photo } from "./Photo";
 import { UserPlaceLog } from "./UserPlaceLog";
 
 interface Location {
-    latitude: number;
-    longitude: number;
+    type: string;
+    coordinates:Array<number>;
 }
 
 @Entity()
@@ -33,6 +33,7 @@ export class User {
     @OneToMany(() => UserPlaceLog, (log: UserPlaceLog) => log.user)
     placeLogs!: UserPlaceLog[];
 
+    @Column({ type: "geography", spatialFeatureType: "Point", srid: 4326, nullable: true })
     currentLocation?: Location;
 
     @CreateDateColumn()

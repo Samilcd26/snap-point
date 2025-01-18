@@ -16,17 +16,17 @@ export class SeedInitialData1705430000001 implements MigrationInterface {
         // Create sample places
         await queryRunner.query(`
             INSERT INTO "place" (id, name, description, location, points, radius) VALUES
-            ('660e8400-e29b-41d4-a716-446655440000', 'Galata Kulesi', 'İstanbulun tarihi kulesi', POINT(28.974158, 41.025648), 50, 100),
-            ('660e8400-e29b-41d4-a716-446655440001', 'Kız Kulesi', 'Üsküdardaki tarihi kule', POINT(29.004129, 41.021177), 40, 80),
-            ('660e8400-e29b-41d4-a716-446655440002', 'Ayasofya', 'Tarihi camii', POINT(28.980175, 41.008583), 60, 120)
+            ('660e8400-e29b-41d4-a716-446655440000', 'Galata Kulesi', 'İstanbulun tarihi kulesi', ST_SetSRID(ST_MakePoint(28.974158, 41.025648), 4326), 50, 100),
+            ('660e8400-e29b-41d4-a716-446655440001', 'Kız Kulesi', 'Üsküdardaki tarihi kule', ST_SetSRID(ST_MakePoint(29.004129, 41.021177), 4326), 40, 80),
+            ('660e8400-e29b-41d4-a716-446655440002', 'Ayasofya', 'Tarihi camii', ST_SetSRID(ST_MakePoint(28.980175, 41.008583), 4326), 60, 120)
         `);
 
         // Create sample photos
         await queryRunner.query(`
             INSERT INTO "photo" (id, "imageUrl", location, "pointsEarned", "userId", "placeId") VALUES
-            ('770e8400-e29b-41d4-a716-446655440000', 'https://example.com/photos/galata1.jpg', POINT(28.974158, 41.025648), 50, '550e8400-e29b-41d4-a716-446655440000', '660e8400-e29b-41d4-a716-446655440000'),
-            ('770e8400-e29b-41d4-a716-446655440001', 'https://example.com/photos/kizkulesi1.jpg', POINT(29.004129, 41.021177), 40, '550e8400-e29b-41d4-a716-446655440001', '660e8400-e29b-41d4-a716-446655440001'),
-            ('770e8400-e29b-41d4-a716-446655440002', 'https://example.com/photos/ayasofya1.jpg', POINT(28.980175, 41.008583), 60, '550e8400-e29b-41d4-a716-446655440002', '660e8400-e29b-41d4-a716-446655440002')
+            ('770e8400-e29b-41d4-a716-446655440000', 'https://example.com/photos/galata1.jpg', ST_SetSRID(ST_MakePoint(28.974158, 41.025648), 4326), 50, '550e8400-e29b-41d4-a716-446655440000', '660e8400-e29b-41d4-a716-446655440000'),
+            ('770e8400-e29b-41d4-a716-446655440001', 'https://example.com/photos/kizkulesi1.jpg', ST_SetSRID(ST_MakePoint(29.004129, 41.021177), 4326), 40, '550e8400-e29b-41d4-a716-446655440001', '660e8400-e29b-41d4-a716-446655440001'),
+            ('770e8400-e29b-41d4-a716-446655440002', 'https://example.com/photos/ayasofya1.jpg', ST_SetSRID(ST_MakePoint(28.980175, 41.008583), 4326), 60, '550e8400-e29b-41d4-a716-446655440002', '660e8400-e29b-41d4-a716-446655440002')
         `);
 
         // Create sample user place logs

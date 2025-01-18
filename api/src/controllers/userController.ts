@@ -130,7 +130,7 @@ export const refreshToken = async (req: Request, res: Response) => {
 
         // Eğer konum bilgisi gönderildiyse güncelle
         if (latitude && longitude) {
-            user.currentLocation = { latitude, longitude };
+            user.currentLocation = { type: "Point", coordinates: [longitude, latitude] };
         }
 
         await userRepository.save(user);
@@ -163,35 +163,49 @@ export const updateLocation = async (req: AuthRequest, res: Response) => {
             return res.status(401).json({ message: "User not found" });
         }
 
-        // Kullanıcının konumunu session'da saklayalım
-        req.user.currentLocation = { latitude, longitude };
+        const userRepository = AppDataSource.getRepository(User);
+        await userRepository.query(
+            `UPDATE "user" SET "currentLocation" = ST_SetSRID(ST_MakePoint($1, $2), 4326)::geography WHERE id = $3`,
+            [longitude, latitude, req.user.id]
+        );
 
-        res.json({ message: "Location updated successfully" });
+        res.json({ message: "Location updated successfully", success: true });
     } catch (error) {
+        console.error('Error updating location:', error);
         res.status(500).json({ message: "Error updating location" });
     }
 };
 
 export const getNearbyPlaces = async (req: AuthRequest, res: Response) => {
     try {
-        if (!req.user?.currentLocation) {
-            return res.status(400).json({ message: "Location not set. Please update your location first." });
+        if (!req.user) {
+            return res.status(401).json({ message: "User not found" });
         }
 
-        const { latitude, longitude } = req.user.currentLocation;
+        const userRepository = AppDataSource.getRepository(User);
+        const currentUser = await userRepository.findOne({
+            where: { id: req.user.id }
+        });
+
+
+        if (!currentUser?.currentLocation) {
+            return res.status(400).json({ message: "Location not set. Please update your location first." });
+        }
+        const { coordinates } = currentUser.currentLocation;
+        const [longitude, latitude] = coordinates;
         const placeRepository = AppDataSource.getRepository(Place);
 
-        // Yakındaki yerleri bul
         const nearbyPlaces = await placeRepository
             .createQueryBuilder("place")
             .where(
                 "ST_DWithin(place.location::geography, ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326)::geography, place.radius)",
-                { latitude, longitude }
+                { longitude, latitude }
             )
             .getMany();
 
         res.json({ nearbyPlaces });
     } catch (error) {
+        console.error('Error fetching nearby places:', error);
         res.status(500).json({ message: "Error fetching nearby places" });
     }
 };

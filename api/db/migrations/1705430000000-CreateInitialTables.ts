@@ -42,6 +42,13 @@ export class CreateInitialTables1705430000000 implements MigrationInterface {
                         isNullable: true,
                     },
                     {
+                        name: "currentLocation",
+                        type: "geography",
+                        spatialFeatureType: "Point",
+                        srid: 4326,
+                        isNullable: true,
+                    },
+                    {
                         name: "createdAt",
                         type: "timestamp",
                         default: "now()",
@@ -78,7 +85,9 @@ export class CreateInitialTables1705430000000 implements MigrationInterface {
                     },
                     {
                         name: "location",
-                        type: "point",
+                        type: "geography",
+                        spatialFeatureType: "Point",
+                        srid: 4326,
                     },
                     {
                         name: "points",
@@ -121,7 +130,9 @@ export class CreateInitialTables1705430000000 implements MigrationInterface {
                     },
                     {
                         name: "location",
-                        type: "point",
+                        type: "geography",
+                        spatialFeatureType: "Point",
+                        srid: 4326,
                     },
                     {
                         name: "pointsEarned",

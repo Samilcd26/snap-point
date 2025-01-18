@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "target": "es6",
-    "module": "commonjs",
+    "target": "ES2022",
+    "module": "CommonJS",
     "lib": ["es6", "dom"],
     "allowJs": true,
     "outDir": "build",
@@ -14,7 +14,8 @@
     "emitDecoratorMetadata": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "strictPropertyInitialization": false
+    "strictPropertyInitialization": false,
+    "moduleResolution": "node"
   },
   "include": ["src/**/*", "config/**/*", "db/migrations", "db/dataSource.ts"],
   "exclude": ["node_modules", "build"]

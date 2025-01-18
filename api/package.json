@@ -7,10 +7,10 @@
     "start": "node build/app.js",
     "dev": "nodemon -r ts-node/register src/app.ts",
     "build": "tsc",
-    "typeorm:generate": "npx typeorm-ts-node-esm migration:generate -d src/db/dataSourceLocal.ts",
-    "typeorm:migrate": "npx typeorm-ts-node-esm migration:run -d src/db/dataSourceLocal.ts",
-    "typeorm:revert": "npx typeorm-ts-node-esm migration:revert -d src/db/dataSourceLocal.ts",
-    "typeorm:drop": "npx typeorm-ts-node-esm schema:drop -d src/db/dataSourceLocal.ts"
+    "typeorm:generate": "npx typeorm-ts-node-commonjs migration:generate -d db/dataSourceLocal.ts",
+    "typeorm:migrate": "npx typeorm-ts-node-commonjs migration:run -d db/dataSourceLocal.ts",
+    "typeorm:revert": "npx typeorm-ts-node-commonjs migration:revert -d db/dataSourceLocal.ts",
+    "typeorm:drop": "npx typeorm-ts-node-commonjs schema:drop -d db/dataSourceLocal.ts"
   },
   "dependencies": {
     "@types/bcrypt": "^5.0.2",
