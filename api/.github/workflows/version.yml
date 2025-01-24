@@ -1,0 +1,83 @@
+name: Automatic Versioning
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  version:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+        token: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '18'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Configure Git
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        
+    - name: Analyze commits and bump version
+      run: |
+        COMMITS=$(git log $(git describe --tags --abbrev=0)..HEAD --pretty=format:"%s")
+        
+        MAJOR=0
+        MINOR=0
+        PATCH=0
+        
+        while IFS= read -r commit; do
+          if [[ $commit == feat!:* ]] || [[ $commit == BREAKING* ]]; then
+            MAJOR=1
+          elif [[ $commit == feat:* ]]; then
+            MINOR=1
+          elif [[ $commit == fix:* ]]; then
+            PATCH=1
+          fi
+        done <<< "$COMMITS"
+        
+        if [ $MAJOR -eq 1 ]; then
+          npm run version:major
+        elif [ $MINOR -eq 1 ]; then
+          npm run version:minor
+        elif [ $PATCH -eq 1 ]; then
+          npm run version:patch
+        fi
+      
+    - name: Update CHANGELOG
+      run: |
+        if [[ $(git diff --name-only) == *package.json* ]]; then
+          VERSION=$(node -p "require('./package.json').version")
+          DATE=$(date +%Y-%m-%d)
+          
+          echo "## [$VERSION] - $DATE" >> CHANGELOG.md.tmp
+          echo "" >> CHANGELOG.md.tmp
+          echo "### Added" >> CHANGELOG.md.tmp
+          git log $(git describe --tags --abbrev=0)..HEAD --pretty=format:%s | grep '^feat:' | sed 's/feat: /* /' >> CHANGELOG.md.tmp
+          echo "" >> CHANGELOG.md.tmp
+          echo "### Fixed" >> CHANGELOG.md.tmp
+          git log $(git describe --tags --abbrev=0)..HEAD --pretty=format:%s | grep '^fix:' | sed 's/fix: /* /' >> CHANGELOG.md.tmp
+          echo "" >> CHANGELOG.md.tmp
+          
+          cat CHANGELOG.md >> CHANGELOG.md.tmp
+          mv CHANGELOG.md.tmp CHANGELOG.md
+          
+          git add CHANGELOG.md
+          git commit -m "docs: update CHANGELOG for v$VERSION"
+        fi
+      
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: ${{ github.ref }}
+        tags: true 
