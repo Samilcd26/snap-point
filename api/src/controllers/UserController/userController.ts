@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
-import AppDataSource from "../../db/dataSource";
-import { User } from "../entities/User";
+import AppDataSource from "../../../db/dataSource";
+import { User } from "../../entities/User";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { Place } from "../entities/Place";
+import { Place } from "../../entities/Place";
 
 interface AuthRequest extends Request {
     user?: User;
@@ -176,39 +176,6 @@ export const updateLocation = async (req: AuthRequest, res: Response) => {
     }
 };
 
-export const getNearbyPlaces = async (req: AuthRequest, res: Response) => {
-    try {
-        if (!req.user) {
-            return res.status(401).json({ message: "User not found" });
-        }
-
-        const userRepository = AppDataSource.getRepository(User);
-        const currentUser = await userRepository.findOne({
-            where: { id: req.user.id }
-        });
-
-
-        if (!currentUser?.currentLocation) {
-            return res.status(400).json({ message: "Location not set. Please update your location first." });
-        }
-        const { coordinates } = currentUser.currentLocation;
-        const [longitude, latitude] = coordinates;
-        const placeRepository = AppDataSource.getRepository(Place);
-
-        const nearbyPlaces = await placeRepository
-            .createQueryBuilder("place")
-            .where(
-                "ST_DWithin(place.location::geography, ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326)::geography, place.radius)",
-                { longitude, latitude }
-            )
-            .getMany();
-
-        res.json({ nearbyPlaces });
-    } catch (error) {
-        console.error('Error fetching nearby places:', error);
-        res.status(500).json({ message: "Error fetching nearby places" });
-    }
-};
 
 export const getProfile = async (req: AuthRequest, res: Response) => {
     try {

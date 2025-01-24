@@ -1,0 +1,111 @@
+# SnapPoint API
+
+SnapPoint, konum tabanlı bir fotoğraf paylaşım uygulamasının backend API'sidir. Bu uygulama, kullanıcıların belirli lokasyonlarda (places) fotoğraf çekerek puan kazanabildiği interaktif bir deneyim sunar.
+
+## Teknik Özellikler
+
+- **Framework**: Express.js
+- **Dil**: TypeScript
+- **Veritabanı**: PostgreSQL
+- **ORM**: TypeORM
+- **Kimlik Doğrulama**: JWT (JSON Web Tokens)
+- **Dosya Yükleme**: Multer
+
+## Proje Yapısı
+api/
+├── src/
+│ ├── controllers/
+│ │ ├── userController.ts # Kullanıcı işlemleri kontrolcüsü
+│ │ └── placeController.ts # Lokasyon işlemleri kontrolcüsü
+│ │
+│ ├── entities/
+│ │ ├── User.ts # Kullanıcı veritabanı modeli
+│ │ └── UserPlaceLog.ts # Kullanıcı-lokasyon log modeli
+│ │
+│ ├── routes/
+│ │ ├── index.ts # Ana router yapılandırması
+│ │ ├── userRoutes.ts # Kullanıcı rotaları
+│ │ └── placeRoutes.ts # Lokasyon rotaları
+│ │
+│ ├── middlewares/ # Ara katman işlemleri
+│ │ └── auth.ts # Kimlik doğrulama middleware
+│ │
+│ ├── utils/ # Yardımcı fonksiyonlar
+│ │ └── jwt.ts # JWT işlemleri
+│ │
+│ └── app.ts # Ana uygulama dosyası
+│
+├── db/
+│ ├── migrations/ # Veritabanı migrasyon dosyaları
+│ │ └── 1705430000001-SeedInitialData.ts
+│ └── dataSourceLocal.ts # Veritabanı bağlantı yapılandırması
+│
+├── package.json # Proje bağımlılıkları ve scriptler
+└── tsconfig.json # TypeScript yapılandırması
+
+## Ana Özellikler
+
+1. **Kullanıcı Yönetimi**
+   - Kayıt ve giriş sistemi
+   - JWT tabanlı kimlik doğrulama
+   - Kullanıcı profil yönetimi
+
+2. **Konum (Places) Sistemi**
+   - Harita üzerinde özel lokasyonlar
+   - Coğrafi koordinat tabanlı yer işaretleri
+   - Lokasyon detayları ve bilgileri
+
+3. **Fotoğraf ve Puan Sistemi**
+   - Belirlenen lokasyonlarda fotoğraf yükleme
+   - Fotoğraf çekimi doğrulama
+   - Puan kazanma ve takip sistemi
+
+4. **Kullanıcı İlerleme Takibi**
+   - Ziyaret edilen lokasyonların kaydı
+   - Kazanılan puanların takibi
+   - Kullanıcı başarı istatistikleri
+
+## Veritabanı Yapısı
+
+- **User**: 
+  - Kullanıcı kimlik bilgileri
+  - Profil detayları
+  - Toplam puan
+
+- **Place**: 
+  - Lokasyon koordinatları
+  - Yer adı ve açıklaması
+  - Puan değeri
+
+- **UserPlaceLog**: 
+  - Kullanıcı ziyaret kayıtları
+  - Fotoğraf bilgileri
+  - Kazanılan puanlar
+
+## API Endpoints
+
+### Kullanıcı İşlemleri
+- `POST /api/users/register`: Yeni kullanıcı kaydı
+- `POST /api/users/login`: Kullanıcı girişi
+- `GET /api/users/profile`: Kullanıcı profili görüntüleme
+- `PUT /api/users/profile`: Profil güncelleme
+
+### Lokasyon İşlemleri
+- `GET /api/places`: Tüm lokasyonları listele
+- `GET /api/places/:id`: Lokasyon detayı
+- `POST /api/places/:id/photo`: Lokasyonda fotoğraf yükle
+- `GET /api/places/nearby`: Yakındaki lokasyonları getir
+
+## Kurulum ve Çalıştırma
+Bağımlılıkları yükle
+npm install
+Geliştirme modunda çalıştır
+npm run dev
+Production build
+npm run build
+npm start
+Veritabanı migration işlemleri
+npm run typeorm:generate
+npm run typeorm:migrate
+
+Bu API, mobil veya web tabanlı bir frontend uygulaması ile entegre çalışacak şekilde tasarlanmıştır.

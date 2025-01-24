@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, ManyToMany, JoinTable } from "typeorm";
 import { User } from "./User";
 import { Place } from "./Place";
 
@@ -16,11 +16,24 @@ export class Photo {
     @Column()
     pointsEarned!: number;
 
+    @Column({ nullable: true })
+    caption?: string;
+
     @ManyToOne(() => User, (user: User) => user.photos)
     user!: User;
 
     @ManyToOne(() => Place, (place: Place) => place.photos)
     place!: Place;
+
+    @ManyToMany(() => User)
+    @JoinTable({ name: "photo_likes" })
+    likedBy!: User[];
+
+    @Column({ default: 0 })
+    likeCount!: number;
+
+    @Column({ default: 0 })
+    commentCount!: number;
 
     @CreateDateColumn()
     createdAt!: Date;
