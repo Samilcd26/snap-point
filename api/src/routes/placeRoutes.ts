@@ -1,10 +1,11 @@
 import { Router } from "express";
-import { getPlaceDetails, getNearbyPlaces } from "../controllers/placeController";
+import { getPlaceDetails, getNearbyPlaces, getVisitedPlaces } from "../controllers/PlaceController/placeController";
 
 const router = Router();
 
 // Protected routes
 router.get("/nearby", getNearbyPlaces);
-router.get("/:id", getPlaceDetails);
+router.get("/detail/:id", getPlaceDetails);
+router.get("/visited-places", getVisitedPlaces);
 
 export default router; 

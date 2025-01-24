@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
-import AppDataSource from "../../db/dataSource";
-import { Photo } from "../entities/Photo";
-import { User } from "../entities/User";
-import { Place } from "../entities/Place";
-import { UserPlaceLog } from "../entities/UserPlaceLog";
+import AppDataSource from "../../../db/dataSource";
+import { Photo } from "../../entities/Photo";
+import { User } from "../../entities/User";
+import { Place } from "../../entities/Place";
+import { UserPlaceLog } from "../../entities/UserPlaceLog";
 
 interface AuthRequest extends Request {
     user?: User;
@@ -78,22 +78,3 @@ export const uploadPhoto = async (req: AuthRequest, res: Response) => {
     }
 };
 
-// Kullanıcının ziyaret ettiği yerleri getir
-export const getVisitedPlaces = async (req: AuthRequest, res: Response) => {
-    try {
-        if (!req.user) {
-            return res.status(401).json({ message: "User not found" });
-        }
-
-        const logRepository = AppDataSource.getRepository(UserPlaceLog);
-        const logs = await logRepository.find({
-            where: { user: { id: req.user.id } },
-            relations: ["place", "photo"],
-            order: { visitedAt: "DESC" }
-        });
-
-        res.json(logs);
-    } catch (error) {
-        res.status(500).json({ message: "Error fetching visited places" });
-    }
-}; 
